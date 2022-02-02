@@ -1,5 +1,5 @@
 include(FetchContent)
-set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL "Disable Updates")
+# set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL "Disable Updates")
 
 cmake_minimum_required(VERSION 3.18.0)
 project(cpp_sudoku_solver VERSION 0.0.1)
@@ -19,8 +19,6 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(minisat)
-
-# find_package(MiniSat 2.2 REQUIRED)
 
 file(GLOB_RECURSE CPP_SUDOKU_SOURCES RELATIVE ${PROJECT_SOURCE_DIR} "src/*.cpp")
 
