@@ -12,6 +12,11 @@
 using std::chrono::duration;
 using std::chrono::high_resolution_clock;
 
+inline std::ostream& operator <<(std::ostream& output, const css::board& board)
+{
+    return css::print_board(board, output);
+}
+
 inline void print_usage(std::string_view prog_name)
 {
     std::cout << "[!] Usage: " << prog_name << " [sudoku_files]\n\n";
@@ -47,8 +52,6 @@ int main(int argc, char** argv)
                 try
                 {
                     auto t0{ high_resolution_clock::now() };
-                    
-
                     css::sudoku_solver solver{ input_stream };
 
                     if (solver.solve())
@@ -63,9 +66,8 @@ int main(int argc, char** argv)
                             std::cout << "[+] Solution " << "for \"" << target
                                     << "\" found in "  << elapsed.count() << " ms\n\n";
                         }
-                                            
-                        css::print_board(sudoku_solution, std::cout);
-                        std::cout << '\n';
+
+                        std::cout << sudoku_solution << '\n';
                     }
                     else
                     {

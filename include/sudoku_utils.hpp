@@ -89,10 +89,10 @@ namespace css
                                           board_dimension dim)
     {
         std::ifstream stream{ filepath.data() };
-        if (stream)
-            return parse_sudoku_file(stream, std::move(dim));
-        else
-            return {};
+        if (!stream)
+            throw std::runtime_error{ "[-] Invalid file path" };
+
+        return parse_sudoku_file(stream, std::move(dim));
     }
 
     // TODO(garcia): Apply FORCE_INLINE macro for this function
@@ -118,15 +118,23 @@ namespace css
             for (uint32_t col{}; col < ncols; ++col)
             {
                 const auto& value = board[row][col];
+                auto pos = make_board_pos(row, col, value - 1);
+
                 if (value)
-                    ret &= solver.addClause(Minisat::mkLit(make_unique_var(dim, {row, col, value - 1})));
+                {
+                    auto variable = make_unique_var(dim, pos);
+                    auto literal = Minisat::mkLit(std::move(variable));
+                    ret &= solver.addClause(std::move(literal));
+                }
             }
         }
         
         return ret;
     }
 
-    static inline std::ostream& print_board(const board& input, std::ostream& output, std::string_view delim = " ")
+    static inline std::ostream& print_board(const board& input, 
+                                            std::ostream& output, 
+                                            std::string_view delim = " ")
     {        
         for (const auto& row : input)
         {
@@ -139,5 +147,4 @@ namespace css
 
         return output;
     }
-
 }
