@@ -39,7 +39,20 @@ namespace css
         private:
             board m_board;
             Minisat::Solver m_solver;
+
         private:
-            // functions
+            inline void just_one_true(vec_literal const& literals);
+            inline void one_value_per_quadrant();
+            void non_double_values();// Implement in .cpp
     };
+
+    inline void sudoku_solver::just_one_true(vec_literal const& literals)
+    {
+        m_solver.addClause(literals);
+
+        for (decltype(literals.size()) i{0}; i < literals.size(); ++i)
+            for (decltype(i) j = {i + 1}; j < literals.size(); ++j)
+                m_solver.addClause(~literals[i], ~literals[j]);
+    }
+
 }

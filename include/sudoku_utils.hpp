@@ -16,10 +16,11 @@
 
 namespace css
 {
-    using board_row = std::vector<int32_t>;
-    using board = std::vector<board_row>;
+    using board_row       = std::vector<int32_t>;
+    using board           = std::vector<board_row>;
     using board_dimension = std::tuple<uint32_t, uint32_t, uint32_t>;
-    using board_position = std::tuple<uint32_t, uint32_t, uint32_t>;
+    using board_position  = std::tuple<uint32_t, uint32_t, uint32_t>;
+    using vec_literal     = Minisat::vec<Minisat::Lit>;
 
     static inline board_position make_board_pos(uint32_t row, 
                                                 uint32_t col, 
