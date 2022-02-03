@@ -7,9 +7,9 @@ namespace css
     class sudoku_solver
     {        
         public:
-            static constexpr inline uint32_t nrows = 9U;
-            static constexpr inline uint32_t ncols = 9U;
-            static constexpr inline uint32_t nvals = 9U;
+            static constexpr inline uint32_t nrows{ 9U };
+            static constexpr inline uint32_t ncols{ 9U };
+            static constexpr inline uint32_t nvals{ 9U };
             static constexpr inline board_dimension dim{ nrows, ncols, nvals };
             
         public:

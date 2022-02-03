@@ -64,7 +64,7 @@ int main(int argc, char** argv)
                             duration<double, std::milli> elapsed{ t1 - t0 };
 
                             std::cout << "[+] Solution " << "for \"" << target
-                                    << "\" found in "  << elapsed.count() << " ms\n\n";
+                                      << "\" found in "  << elapsed.count() << " ms\n\n";
                         }
 
                         std::cout << sudoku_solution << '\n';
