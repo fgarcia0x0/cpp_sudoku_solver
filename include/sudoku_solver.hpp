@@ -55,4 +55,20 @@ namespace css
                 m_solver.addClause(~literals[i], ~literals[j]);
     }
 
+    inline void sudoku_solver::one_value_per_quadrant()
+    {
+        vec_literal literals;
+
+        for (uint32_t row = 0U; row < nrows; ++row)
+        {
+            for (uint32_t col = 0U; col < ncols; ++col)
+            {
+                for (uint32_t val = 0U; val < nvals; ++val)
+                    literals.push(Minisat::mkLit(make_unique_var(make_board_dim(row, col, val), 
+                                                                 make_board_pos(row, col, val))));
+                
+                just_one_true(literals);
+            }
+        }
+    }
 }
