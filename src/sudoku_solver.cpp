@@ -24,7 +24,7 @@ namespace css
                     }
                 }
 
-                if (nfound != 1)
+                if (nfound > 1)
                     throw std::runtime_error{ "[-] Rule Break: The solver assigned one position with more than one value" };
             }
         }
