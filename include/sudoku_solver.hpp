@@ -52,7 +52,7 @@ namespace css
 
         auto size{ literals.size() };
 
-        for (decltype(size) i{ 0 }; i < size; ++i)
+        for (decltype(size) i{}; i < size; ++i)
             for (decltype(i) j{ i + 1 }; j < size; ++j)
                 m_solver.addClause(~literals[i], ~literals[j]);
     }
@@ -61,12 +61,12 @@ namespace css
     {
         vec_literal literals;
 
-        for (uint32_t row{ 0U }; row < nrows; ++row)
+        for (uint32_t row{}; row < nrows; ++row)
         {
-            for (uint32_t col{ 0U }; col < ncols; ++col)
+            for (uint32_t col{}; col < ncols; ++col)
             {
-                for (uint32_t val{ 0U }; val < nvals; ++val)
-                    literals.push(Minisat::mkLit(make_unique_var(make_board_dim(9U, 9U, 9U), 
+                for (uint32_t val{}; val < nvals; ++val)
+                    literals.push(Minisat::mkLit(make_unique_var(make_board_dim(nrows, ncols, nvals), 
                                                                  make_board_pos(row, col, val))));
                 
                 just_one_true(literals);
