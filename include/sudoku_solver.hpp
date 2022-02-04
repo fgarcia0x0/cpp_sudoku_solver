@@ -1,9 +1,10 @@
 #pragma once
 
 #include <sudoku_utils.hpp>
+#include <sudoku_rules.hpp>
 
 namespace css
-{   
+{
     class sudoku_solver
     {        
         public:
@@ -19,6 +20,12 @@ namespace css
                 : m_board{ board }
             {
                 sudoku_init_board(m_solver, dim);
+                
+                sudoku_apply_rule<sudoku_rule_types::one_value_per_sqr>{}(m_solver, dim);
+                sudoku_apply_rule<sudoku_rule_types::one_value_per_col>{}(m_solver, dim);
+                sudoku_apply_rule<sudoku_rule_types::one_value_per_row>{}(m_solver, dim);
+                sudoku_apply_rule<sudoku_rule_types::one_value_per_quad>{}(m_solver, dim);
+
                 if (!sudoku_populate_solver(m_solver, m_board, dim))
                     throw std::runtime_error{ "[-] Error in populate solver" };
             }
@@ -30,7 +37,6 @@ namespace css
             
             bool solve() 
             {
-                // TODO(garcia): Apply Rules Here?
                 return m_solver.solve(); 
             }
 
@@ -39,38 +45,5 @@ namespace css
         private:
             board m_board;
             Minisat::Solver m_solver;
-
-        private:
-            inline void just_one_true(vec_literal const& literals);
-            inline void one_value_per_quadrant();
-            void non_double_values();
     };
-
-    inline void sudoku_solver::just_one_true(vec_literal const& literals)
-    {
-        m_solver.addClause(literals);
-
-        auto size{ literals.size() };
-
-        for (decltype(size) i{}; i < size; ++i)
-            for (decltype(i) j{ i + 1 }; j < size; ++j)
-                m_solver.addClause(~literals[i], ~literals[j]);
-    }
-
-    inline void sudoku_solver::one_value_per_quadrant()
-    {
-        vec_literal literals;
-
-        for (uint32_t row{}; row < nrows; ++row)
-        {
-            for (uint32_t col{}; col < ncols; ++col)
-            {
-                for (uint32_t val{}; val < nvals; ++val)
-                    literals.push(Minisat::mkLit(make_unique_var(make_board_dim(nrows, ncols, nvals), 
-                                                                 make_board_pos(row, col, val))));
-                
-                just_one_true(literals);
-            }
-        }
-    }
 }
