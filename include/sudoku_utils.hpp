@@ -21,6 +21,7 @@ namespace css
     using board_dimension = std::tuple<uint32_t, uint32_t, uint32_t>;
     using board_position  = std::tuple<uint32_t, uint32_t, uint32_t>;
     using vec_literal     = Minisat::vec<Minisat::Lit>;
+    using sat_solver      = Minisat::Solver;
 
     static inline board_position make_board_pos(uint32_t row, 
                                                 uint32_t col, 
@@ -97,17 +98,17 @@ namespace css
     }
 
     // TODO(garcia): Apply FORCE_INLINE macro for this function
-    static inline void sudoku_init_board(Minisat::Solver& solver, 
+    static inline void sudoku_init_board(sat_solver& solver, 
                                          board_dimension dim)
     {
         auto [nrows, ncols, nvals] = dim;
-        for (uint32_t row = 0U; row < nrows; ++row)
-            for (uint32_t col = 0U; col < ncols; ++col)
-                for (uint32_t val = 0U; val < nvals; ++val)
+        for (uint32_t row{}; row < nrows; ++row)
+            for (uint32_t col{}; col < ncols; ++col)
+                for (uint32_t val{}; val < nvals; ++val)
                     static_cast<void>(solver.newVar());
     }
 
-    static inline bool sudoku_populate_solver(Minisat::Solver& solver, 
+    static inline bool sudoku_populate_solver(sat_solver& solver, 
                                               const board& board,
                                               board_dimension dim)
     {
@@ -118,10 +119,10 @@ namespace css
         {
             for (uint32_t col{}; col < ncols; ++col)
             {
-                const auto& value = board[row][col];
-                auto pos = make_board_pos(row, col, value - 1);
+                auto val = board[row][col];
+                auto pos = make_board_pos(row, col, val - 1);
 
-                if (value)
+                if (val)
                 {
                     auto variable = make_unique_var(dim, pos);
                     auto literal = Minisat::mkLit(std::move(variable));
