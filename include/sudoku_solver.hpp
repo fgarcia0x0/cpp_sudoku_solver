@@ -1,10 +1,12 @@
 #pragma once
 
+#include <memory>
 #include <sudoku_utils.hpp>
 #include <sudoku_rules.hpp>
 
 namespace css
 {
+    // TODO(garcia): Implement m_solver using shared_ptr or new/delete equivalent
     class sudoku_solver
     {        
         public:
@@ -21,15 +23,7 @@ namespace css
             sudoku_solver(TBoard&& board)
                 : m_board{ std::forward<TBoard>(board) }
             {
-                sudoku_init_board(m_solver, dim);
-                
-                sudoku_apply_rule<sudoku_rule_types::one_value_per_sqr>{}(m_solver, dim);
-                sudoku_apply_rule<sudoku_rule_types::one_value_per_col>{}(m_solver, dim);
-                sudoku_apply_rule<sudoku_rule_types::one_value_per_row>{}(m_solver, dim);
-                sudoku_apply_rule<sudoku_rule_types::one_value_per_quad>{}(m_solver, dim);
-
-                if (!sudoku_populate_solver(m_solver, m_board, dim))
-                    throw std::runtime_error{ "[-] Error in populate solver" };
+                sudoku_prepare();
             }
 
             sudoku_solver(std::ifstream& input_file)
@@ -37,7 +31,7 @@ namespace css
             {
             }
             
-            bool solve() 
+            bool solve()
             {
                 return m_solver.solve(); 
             }
@@ -47,5 +41,21 @@ namespace css
         private:
             board m_board;
             sat_solver m_solver;
+            
+        private:
+            inline void sudoku_prepare();
     };
+
+    inline void sudoku_solver::sudoku_prepare()
+    {
+        sudoku_init_board(m_solver, dim);
+                
+        sudoku_apply_rule<sudoku_rule_types::one_value_per_sqr>{}(m_solver, dim);
+        sudoku_apply_rule<sudoku_rule_types::one_value_per_col>{}(m_solver, dim);
+        sudoku_apply_rule<sudoku_rule_types::one_value_per_row>{}(m_solver, dim);
+        sudoku_apply_rule<sudoku_rule_types::one_value_per_quad>{}(m_solver, dim);
+
+        if (!sudoku_populate_solver(m_solver, m_board, dim))
+            throw std::runtime_error{ "[-] Error in populate solver" };
+    }
 }

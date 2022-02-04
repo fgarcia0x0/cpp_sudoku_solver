@@ -1,5 +1,4 @@
 include(FetchContent)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL "Disable Updates")
 
 cmake_minimum_required(VERSION 3.18.0)
 project(cpp_sudoku_solver VERSION 0.0.1)

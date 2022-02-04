@@ -110,8 +110,10 @@ namespace css
                     static_cast<void>(solver.newVar());
     }
 
+    template <typename TBoard, 
+              typename = std::enable_if_t<std::is_same_v<std::decay_t<TBoard>, board>>>
     static inline bool sudoku_populate_solver(sat_solver& solver, 
-                                              const board& board,
+                                              TBoard&& board,
                                               board_dimension dim)
     {
         bool ret = true;
@@ -121,8 +123,8 @@ namespace css
         {
             for (uint32_t col{}; col < ncols; ++col)
             {
-                auto val = board[row][col];
-                auto pos = make_board_pos(row, col, val - 1);
+                auto val{ std::forward<TBoard>(board)[row][col] };
+                auto pos{ make_board_pos(row, col, val - 1) };
 
                 if (val)
                 {
