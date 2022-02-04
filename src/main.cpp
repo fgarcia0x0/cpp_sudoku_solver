@@ -1,6 +1,5 @@
 #include <iostream>
 #include <chrono>
-#include <sudoku_utils.hpp>
 #include <sudoku_solver.hpp>
 
 #if defined(_WIN32) || defined(WIN32) 
