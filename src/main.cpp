@@ -45,7 +45,9 @@ int main(int argc, char** argv)
             
             if (target)
                 ++target;
-
+            else
+                target = argv[index];
+            
             if (input_stream)
             {
                 try

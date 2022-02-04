@@ -14,6 +14,8 @@
 #include <tuple>
 #include <minisat/core/Solver.h>
 
+// TODO(garcia, future): Implement an SAT layer to handle with different SAT Solver's
+
 namespace css
 {
     using board_row       = std::vector<int32_t>;
@@ -48,7 +50,7 @@ namespace css
     static board parse_sudoku_file(std::istream& stream, board_dimension dim)
     {
         if (stream.eof())
-            throw std::runtime_error{ "invalid file stream" };
+            throw std::runtime_error{ "[-] invalid file stream" };
 
         auto [rows, cols, _] = dim;
         board result(rows, board_row(cols));
@@ -64,7 +66,7 @@ namespace css
 
             size_t real_line_size = line.size() - nspaces;
             if (real_line_size != rows)
-                throw std::runtime_error{ "Line #" + std::to_string(nlines) + " has invalid size" };
+                throw std::runtime_error{ "[-] Line #" + std::to_string(nlines) + " has invalid size" };
 
             size_t pos = {};
 
@@ -75,14 +77,14 @@ namespace css
                 else if (std::isdigit(character))
                     result[nlines][pos++] = character - '0';
                 else
-                    throw std::runtime_error{ "Line #" + std::to_string(nlines) + "contains invalid character: '" + character + "'"};
+                    throw std::runtime_error{ "[-] Line #" + std::to_string(nlines) + "contains invalid character: '" + character + "'"};
             }
 
             ++nlines;
         }
 
         if (nlines != rows)
-            throw std::runtime_error{ "This file has missing line" };
+            throw std::runtime_error{ "[-] This file has missing line" };
         
         return result;
     }

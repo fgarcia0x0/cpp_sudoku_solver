@@ -16,8 +16,10 @@ namespace css
         public:
             sudoku_solver() = delete;
 
-            sudoku_solver(const board& board)
-                : m_board{ board }
+            template <typename TBoard, 
+                      typename = std::enable_if_t<std::is_same_v<std::decay_t<TBoard>, board>>>
+            sudoku_solver(TBoard&& board)
+                : m_board{ std::forward<TBoard>(board) }
             {
                 sudoku_init_board(m_solver, dim);
                 
@@ -44,6 +46,6 @@ namespace css
 
         private:
             board m_board;
-            Minisat::Solver m_solver;
+            sat_solver m_solver;
     };
 }
