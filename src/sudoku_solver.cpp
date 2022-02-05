@@ -5,7 +5,7 @@ namespace css
     board sudoku_solver::get_model()
     {
         board result(nrows, board_row(ncols));
-
+    
         for (uint32_t row{}; row < nrows; ++row)
         {
             for (uint32_t col{}; col < ncols; ++col)
@@ -15,7 +15,7 @@ namespace css
                 for (uint32_t val{}; val < nvals; ++val)
                 {
                     auto pos = make_board_pos(row, col, val);
-                    auto mval = m_solver.modelValue(make_unique_var(dim, pos));
+                    auto mval = m_solver->modelValue(make_unique_var(dim, pos));
                     
                     if (mval.isTrue())
                     {

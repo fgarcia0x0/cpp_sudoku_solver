@@ -10,16 +10,16 @@ namespace
     // ensure exactly one of this set of literals has to evaluate to true
     template <typename T, 
               typename = std::enable_if_t<std::is_same_v<std::decay_t<T>, css::vec_literal>>>
-    inline void ensure_just_one_true(css::sat_solver& solver, T&& literals)
+    inline void ensure_just_one_true(std::shared_ptr<css::sat_solver> solver_ptr, T&& literals)
     {
         size_t size = static_cast<size_t>(literals.size());
         assert(size != SIZE_MAX);
 
-        solver.addClause(literals);
+        solver_ptr->addClause(literals);
 
         for (size_t i{}; i < size; ++i)
             for (size_t j{ i + 1 }; j < size; ++j)
-                solver.addClause(~literals[i], ~literals[j]);
+                solver_ptr->addClause(~literals[i], ~literals[j]);
     }
 }
 
@@ -41,7 +41,7 @@ namespace css
     template <>
     struct sudoku_apply_rule<sudoku_rule_types::one_value_per_row>
     {
-        void operator()(sat_solver& solver, board_dimension dim) const
+        void operator()(std::shared_ptr<sat_solver> solver_ptr, board_dimension dim) const
         {
             auto [nrows, ncols, nvals] = dim;
 
@@ -57,7 +57,7 @@ namespace css
                         literals.push(Minisat::mkLit(make_unique_var(dim, pos)));
                     }
                     
-                    ensure_just_one_true(solver, std::move(literals));
+                    ensure_just_one_true(solver_ptr, std::move(literals));
                 }
             }
         }
@@ -66,7 +66,7 @@ namespace css
     template <>
     struct sudoku_apply_rule<sudoku_rule_types::one_value_per_col>
     {
-        void operator()(sat_solver& solver, board_dimension dim) const
+        void operator()(std::shared_ptr<sat_solver> solver_ptr, board_dimension dim) const
         {
             auto [nrows, ncols, nvals] = dim;
 
@@ -82,7 +82,7 @@ namespace css
                         literals.push(Minisat::mkLit(make_unique_var(dim, pos)));
                     }
 
-                    ensure_just_one_true(solver, std::move(literals));
+                    ensure_just_one_true(solver_ptr, std::move(literals));
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace css
     template <>
     struct sudoku_apply_rule<sudoku_rule_types::one_value_per_quad>
     {
-        void operator()(sat_solver& solver, board_dimension dim) const
+        void operator()(std::shared_ptr<sat_solver> solver_ptr, board_dimension dim) const
         {
             auto [nrows, ncols, nvals] = dim;
             auto quad_size = static_cast<uint32_t>(std::sqrt(nrows));
@@ -113,7 +113,7 @@ namespace css
                             }
                         }
                         
-                        ensure_just_one_true(solver, std::move(literals));
+                        ensure_just_one_true(solver_ptr, std::move(literals));
                     }
                 }
             }
@@ -123,7 +123,7 @@ namespace css
     template <>
     struct sudoku_apply_rule<sudoku_rule_types::one_value_per_sqr>
     {
-        void operator()(sat_solver& solver, board_dimension dim) const
+        void operator()(std::shared_ptr<sat_solver> solver_ptr, board_dimension dim) const
         {
             auto [nrows, ncols, nvals] = dim;
 
@@ -139,7 +139,7 @@ namespace css
                         literals.push(Minisat::mkLit(make_unique_var(dim, pos)));
                     }
                     
-                    ensure_just_one_true(solver, std::move(literals));
+                    ensure_just_one_true(solver_ptr, std::move(literals));
                 }
             }
         }

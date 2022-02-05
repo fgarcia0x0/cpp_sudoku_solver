@@ -58,7 +58,7 @@ namespace css
 
         for (std::string line; std::getline(stream, line) && nlines <= rows; )
         {
-            if (line.empty())
+            if (line.empty() || line[0] == '#')
                 continue;
             
             // count whitespace characters
@@ -100,19 +100,19 @@ namespace css
     }
 
     // TODO(garcia): Apply FORCE_INLINE macro for this function
-    static inline void sudoku_init_board(sat_solver& solver, 
+    static inline void sudoku_init_board(std::shared_ptr<sat_solver> solver_ptr, 
                                          board_dimension dim)
     {
         auto [nrows, ncols, nvals] = dim;
         for (uint32_t row{}; row < nrows; ++row)
             for (uint32_t col{}; col < ncols; ++col)
                 for (uint32_t val{}; val < nvals; ++val)
-                    static_cast<void>(solver.newVar());
+                    static_cast<void>(solver_ptr->newVar());
     }
 
     template <typename TBoard, 
               typename = std::enable_if_t<std::is_same_v<std::decay_t<TBoard>, board>>>
-    static inline bool sudoku_populate_solver(sat_solver& solver, 
+    static inline bool sudoku_populate_solver(std::shared_ptr<sat_solver> solver_ptr, 
                                               TBoard&& board,
                                               board_dimension dim)
     {
@@ -130,7 +130,7 @@ namespace css
                 {
                     auto variable = make_unique_var(dim, pos);
                     auto literal = Minisat::mkLit(std::move(variable));
-                    ret &= solver.addClause(std::move(literal));
+                    ret &= solver_ptr->addClause(std::move(literal));
                 }
             }
         }

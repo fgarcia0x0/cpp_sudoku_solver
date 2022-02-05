@@ -6,9 +6,8 @@
 
 namespace css
 {
-    // TODO(garcia): Implement m_solver using shared_ptr or new/delete equivalent
     class sudoku_solver
-    {        
+    {
         public:
             static constexpr inline uint32_t nrows{ 9U };
             static constexpr inline uint32_t ncols{ 9U };
@@ -23,6 +22,7 @@ namespace css
             sudoku_solver(TBoard&& board)
                 : m_board{ std::forward<TBoard>(board) }
             {
+                m_solver = std::make_shared<sat_solver>();
                 sudoku_prepare();
             }
 
@@ -33,15 +33,23 @@ namespace css
             
             bool solve()
             {
-                return m_solver.solve(); 
+                return m_solver->solve();
             }
 
             board get_model();
 
+            template <typename TBoard, 
+                      typename = std::enable_if_t<std::is_same_v<std::decay_t<TBoard>, board>>>
+            void reset(TBoard&& new_board)
+            {
+                m_board = std::forward<TBoard>(new_board);
+                m_solver.reset(new sat_solver{});
+                sudoku_prepare();
+            }
+
         private:
             board m_board;
-            sat_solver m_solver;
-            
+            std::shared_ptr<sat_solver> m_solver;
         private:
             inline void sudoku_prepare();
     };
